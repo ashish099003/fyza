@@ -1,0 +1,1 @@
+name: CI\n\non: [push]\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v3\n      - name: Setup Python\n        uses: actions/setup-python@v4\n        with:\n          python-version: "3.11"\n      - name: Install dependencies\n        run: pip install -r requirements.txt\n      - name: Run tests\n        run: pytest
