@@ -1,28 +1,16 @@
 from fastapi import FastAPI, Depends, HTTPException, Path
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-
+from backend.profile.financialgoals.api_router import api_router
+from sqlalchemy.orm import Session
 from backend.models import Base
 from backend.schemas import UserProfileCreate, UserProfileResponse
 from backend.crud import get_user_profile, create_user_profile, update_user_profile
-
-# Database setup
-SQLALCHEMY_DATABASE_URL = "postgresql://fyza_user:fyza_user@localhost:5432/fyzadb"
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
+from backend.dependencies import engine, get_db
 # Initialize tables
 Base.metadata.create_all(bind=engine)
 
+
 app = FastAPI()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
+app.include_router(api_router)
 # 1) GET profile by ID
 @app.get(
     "/api/profile/{user_id}",
@@ -65,3 +53,5 @@ def update_profile(
     if not updated:
         raise HTTPException(status_code=404, detail="User profile not found")
     return updated
+
+app.include_router(api_router)
