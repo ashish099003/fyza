@@ -17,8 +17,14 @@ def compare_stocks(symbols: list[str]):
 
 def generate_stock_comparison(symbols: list[str]):
     stock_data = compare_stocks(symbols)
-    prompt = f"Compare the following stocks for the upcoming week: {symbols}.\nData: {stock_data}"
+    prompt = f"You are finance Expert and need you to provide the very crisk response in 2-3 points. Compare the following stocks for the upcoming week: {symbols}.\nData: {stock_data}"
 
     model = GenerativeModel("gemini-2.0-flash-lite-001")
     response = model.generate_content(prompt)
     return response.text
+
+
+
+
+
+
