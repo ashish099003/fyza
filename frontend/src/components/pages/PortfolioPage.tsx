@@ -106,28 +106,28 @@ export function PortfolioPage() {
       paidTenure: 5,
       priority: 'low'
     },
-    {
-      name: 'Personal Loan',
-      bank: 'SBI',
-      outstanding: 180000,
-      emi: 8500,
-      rate: 12.5,
-      tenure: '2 years',
-      totalTenure: 3,
-      paidTenure: 1,
-      priority: 'medium'
-    },
-    {
-      name: 'Car Loan',
-      bank: 'ICICI Bank',
-      outstanding: 450000,
-      emi: 12500,
-      rate: 9.2,
-      tenure: '4 years',
-      totalTenure: 5,
-      paidTenure: 1,
-      priority: 'low'
-    },
+    // {
+    //   name: 'Personal Loan',
+    //   bank: 'SBI',
+    //   outstanding: 180000,
+    //   emi: 8500,
+    //   rate: 12.5,
+    //   tenure: '2 years',
+    //   totalTenure: 3,
+    //   paidTenure: 1,
+    //   priority: 'medium'
+    // },
+    // {
+    //   name: 'Car Loan',
+    //   bank: 'ICICI Bank',
+    //   outstanding: 450000,
+    //   emi: 12500,
+    //   rate: 9.2,
+    //   tenure: '4 years',
+    //   totalTenure: 5,
+    //   paidTenure: 1,
+    //   priority: 'low'
+    // },
     {
       name: 'Credit Card',
       bank: 'HDFC Bank',
@@ -514,7 +514,7 @@ export function PortfolioPage() {
         </TabsContent>
 
         <TabsContent value="insurance" className="flex-1 overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 h-full overflow-y-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto">
             {insurancePolicies.map((policy, index) => (
               <Card key={index} className={`hover:shadow-lg transition-all duration-300 border-0 shadow-sm rounded-2xl bg-gradient-to-br from-card to-card/50 ${
                 policy.recommendation === 'increase' ? 'border-l-4 border-l-amber-400' : 'border-l-4 border-l-green-500'
