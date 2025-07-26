@@ -33,6 +33,7 @@ export function AIAssistant({ isRightSidebarCollapsed }: AIAssistantProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isInputExpanded, setIsInputExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -44,6 +45,7 @@ export function AIAssistant({ isRightSidebarCollapsed }: AIAssistantProps) {
   const [inputText, setInputText] = useState('');
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // Dragging logic
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isDragging) {
@@ -54,9 +56,7 @@ export function AIAssistant({ isRightSidebarCollapsed }: AIAssistantProps) {
       }
     };
 
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
+    const handleMouseUp = () => setIsDragging(false);
 
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
@@ -120,9 +120,9 @@ export function AIAssistant({ isRightSidebarCollapsed }: AIAssistantProps) {
     setInputText(suggestion);
   };
 
+  // Floating button if chat is closed
   if (!isOpen) {
-    const rightOffset = isRightSidebarCollapsed ? 60 : 340; // Adjust based on sidebar state
-    
+    const rightOffset = isRightSidebarCollapsed ? 60 : 340;
     return (
       <Button
         onClick={() => setIsOpen(true)}
@@ -154,6 +154,7 @@ export function AIAssistant({ isRightSidebarCollapsed }: AIAssistantProps) {
         cursor: isDragging ? 'grabbing' : 'default'
       }}
     >
+      {/* Header */}
       <div
         className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-primary to-green-600 text-primary-foreground rounded-t-lg cursor-grab active:cursor-grabbing"
         onMouseDown={handleMouseDown}
@@ -164,49 +165,39 @@ export function AIAssistant({ isRightSidebarCollapsed }: AIAssistantProps) {
             <div className="absolute -top-1 -right-1 w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-pulse" />
           </div>
           <span className="font-medium">Fyza AI Assistant</span>
-          <Badge variant="secondary" className="text-xs bg-white/20 text-white">
-            Agentic AI
-          </Badge>
+          <Badge variant="secondary" className="text-xs bg-white/20 text-white">Agentic AI</Badge>
         </div>
         <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="h-6 w-6 text-primary-foreground hover:bg-primary-foreground/20"
-          >
+          <Button variant="ghost" size="icon" onClick={() => setIsExpanded(!isExpanded)} className="h-6 w-6 text-primary-foreground hover:bg-primary-foreground/20">
             {isExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsOpen(false)}
-            className="h-6 w-6 text-primary-foreground hover:bg-primary-foreground/20"
-          >
+          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-6 w-6 text-primary-foreground hover:bg-primary-foreground/20">
             <X className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
+      {/* Chat Messages */}
       <div className="flex-1 p-4 overflow-y-auto space-y-3">
         {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-[80%] p-3 rounded-lg text-sm ${
-                message.isUser
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground'
-              }`}
-            >
+          <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[80%] p-3 rounded-lg text-sm ${
+              message.isUser ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'
+            }`}>
               {message.text}
             </div>
           </div>
         ))}
 
-        {messages.length === 1 && (
+        {loading && (
+          <div className="flex justify-start">
+            <div className="max-w-[80%] p-3 rounded-lg text-sm bg-secondary text-secondary-foreground italic animate-pulse">
+              Fyza AI is typing...
+            </div>
+          </div>
+        )}
+
+        {messages.length === 1 && !loading && (
           <div className="space-y-2">
             <p className="text-xs text-muted-foreground">Quick suggestions:</p>
             {suggestions.map((suggestion, index) => (
@@ -217,30 +208,21 @@ export function AIAssistant({ isRightSidebarCollapsed }: AIAssistantProps) {
               >
                 <suggestion.icon className="h-4 w-4 text-primary" />
                 <span className="flex-1">{suggestion.text}</span>
-                <Badge variant="secondary" className="text-xs">
-                  {suggestion.category}
-                </Badge>
+                <Badge variant="secondary" className="text-xs">{suggestion.category}</Badge>
               </div>
             ))}
           </div>
         )}
       </div>
 
+      {/* Input Box */}
       <div className="p-4 border-t space-y-2">
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsInputExpanded(!isInputExpanded)}
-            className="h-8 w-8"
-          >
+          <Button variant="ghost" size="icon" onClick={() => setIsInputExpanded(!isInputExpanded)} className="h-8 w-8">
             {isInputExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </Button>
-          <span className="text-xs text-muted-foreground">
-            {isInputExpanded ? 'Collapse input' : 'Expand input'}
-          </span>
+          <span className="text-xs text-muted-foreground">{isInputExpanded ? 'Collapse input' : 'Expand input'}</span>
         </div>
-        
         <div className="flex gap-2">
           {isInputExpanded ? (
             <Textarea
