@@ -1,1 +1,30 @@
-.idea
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env/
+.venv/
+
+# MacOS files
+.DS_Store
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Python build/packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# IDE settings
+.vscode/
+.idea/
+shared/utils/service_account.json
