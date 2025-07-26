@@ -191,21 +191,21 @@ export function BudgetPage() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveView('budget')}>
+        <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md rounded-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm" onClick={() => setActiveView('budget')}>
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-xs text-muted-foreground mb-1">Monthly Budget</p>
                 <p className="text-lg font-bold text-foreground">₹{(totalBudgeted / 1000).toFixed(0)}K</p>
               </div>
-              <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center">
                 <Target className="h-4 w-4 text-blue-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setActiveView('expenses')}>
+        <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border-0 shadow-md rounded-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm" onClick={() => setActiveView('expenses')}>
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div className="flex-1">
@@ -213,14 +213,14 @@ export function BudgetPage() {
                 <p className="text-lg font-bold text-foreground">₹{(totalSpent / 1000).toFixed(0)}K</p>
                 <p className="text-xs text-muted-foreground">{((totalSpent / totalBudgeted) * 100).toFixed(0)}% of budget</p>
               </div>
-              <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-green-50 flex items-center justify-center">
                 <Wallet className="h-4 w-4 text-green-600" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-lg transition-all duration-300 border-0 shadow-md rounded-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
           <CardContent className="p-3">
             <div className="flex items-center justify-between">
               <div className="flex-1">
@@ -228,7 +228,7 @@ export function BudgetPage() {
                 <p className="text-lg font-bold text-foreground">₹{((totalBudgeted - totalSpent) / 1000).toFixed(0)}K</p>
                 <p className="text-xs text-muted-foreground">{((totalBudgeted - totalSpent) / totalBudgeted * 100).toFixed(0)}% available</p>
               </div>
-              <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center">
                 <TrendingUp className="h-4 w-4 text-purple-600" />
               </div>
             </div>
@@ -248,11 +248,11 @@ export function BudgetPage() {
           <TabsContent value="overview" className="flex-1 overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
               {/* Budget Categories Tile */}
-              <Card className="flex flex-col">
+              <Card className="flex flex-col hover:shadow-lg transition-all duration-300 border-0 shadow-md rounded-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">Budget Categories</CardTitle>
-                    <Button size="sm" variant="outline" onClick={() => setActiveView('budget')}>
+                    <Button size="sm" variant="outline" className="rounded-full" onClick={() => setActiveView('budget')}>
                       <Maximize2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -261,7 +261,7 @@ export function BudgetPage() {
                   {categories.slice(0, 4).map((category, index) => (
                     <div 
                       key={index} 
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 cursor-pointer"
+                      className="flex items-center justify-between p-3 border rounded-xl hover:bg-accent/50 cursor-pointer"
                       onClick={() => handleCategoryClick(category.name)}
                     >
                       <div className="flex items-center gap-2">
@@ -286,18 +286,18 @@ export function BudgetPage() {
               </Card>
 
               {/* Recent Expenses Tile */}
-              <Card className="flex flex-col">
+              <Card className="flex flex-col hover:shadow-lg transition-all duration-300 border-0 shadow-md rounded-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">Recent Expenses</CardTitle>
-                    <Button size="sm" variant="outline" onClick={() => setActiveView('expenses')}>
+                    <Button size="sm" variant="outline" className="rounded-full" onClick={() => setActiveView('expenses')}>
                       <Maximize2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="flex-1 overflow-y-auto space-y-2">
                   {recentExpenses.slice(0, 5).map((expense) => (
-                    <div key={expense.id} className="flex items-center justify-between p-2 border rounded-lg hover:bg-accent/50">
+                    <div key={expense.id} className="flex items-center justify-between p-2 border rounded-xl hover:bg-accent/50">
                       <div className="flex-1">
                         <p className="font-medium text-sm">{expense.description}</p>
                         <div className="flex items-center gap-2 mt-1">
