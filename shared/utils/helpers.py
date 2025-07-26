@@ -1,1 +1,2 @@
-def helper():\n    return "utility function"
+def helper():
+    return "utility function"
