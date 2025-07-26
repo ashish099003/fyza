@@ -151,7 +151,7 @@ export function Header({ onShowProfile, onNavigateHome }: HeaderProps) {
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
-              Account Settings
+              Account Settings <i> coming soon </i>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <LogOut className="mr-2 h-4 w-4" />

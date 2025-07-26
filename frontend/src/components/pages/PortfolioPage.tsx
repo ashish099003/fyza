@@ -288,6 +288,9 @@ export function PortfolioPage() {
                       <Plus className="h-4 w-4 mr-2" />
                       Add
                     </Button>
+                    <Button size="sm" variant="outline">
+                        Transact <i> (coming soon) </i>
+                    </Button>
                   </div>
                 </div>
                 <div className="flex gap-2 mt-2">
