@@ -28,3 +28,7 @@ dist/
 .vscode/
 .idea/
 shared/utils/service_account.json
+
+# Frontend code
+frontend/.vite
+frontend/.node_modules
