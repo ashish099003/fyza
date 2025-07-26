@@ -5,15 +5,14 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import {
   Home,
-  User,
   PieChart,
   Wallet,
   BookOpen,
-  BarChart3,
-  Bell,
   Menu,
   X,
-  TrendingUp
+  TrendingUp,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 interface NavigationProps {
@@ -23,15 +22,14 @@ interface NavigationProps {
 
 const navItems = [
   { id: 'landing', label: 'Home', icon: Home, badge: null },
-  { id: 'profile', label: 'Profile', icon: User, badge: null },
-  { id: 'portfolio', label: 'Portfolio', icon: PieChart, badge: '₹2.4L' },
+  { id: 'portfolio', label: 'Portfolio', icon: PieChart, badge: '₹10.4L' },
   { id: 'budget', label: 'Budget & Expenses', icon: Wallet, badge: null },
-  { id: 'knowledge', label: 'Knowledge Portal', icon: BookOpen, badge: 'New' },
-  { id: 'health', label: 'Financial Health', icon: BarChart3, badge: null }
+  { id: 'knowledge', label: 'Knowledge Portal', icon: BookOpen, badge: 'New' }
 ];
 
 export function Navigation({ currentPage, onPageChange }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handlePageChange = (pageId: string) => {
     onPageChange(pageId);
@@ -44,7 +42,7 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="md:hidden fixed top-4 left-4 z-40"
+        className="md:hidden fixed top-4 left-4 z-50"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       >
         {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -53,7 +51,7 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black/50 z-30"
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -61,20 +59,27 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
       {/* Sidebar */}
       <div
         className={`
-          fixed left-0 top-0 h-full w-64 bg-sidebar border-r border-sidebar-border z-40 transform transition-transform duration-300 ease-in-out
+          fixed left-0 top-16 h-[calc(100vh-4rem)] bg-sidebar border-r border-sidebar-border z-40 transform transition-all duration-300 ease-in-out
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:translate-x-0 md:static md:z-0
+          md:translate-x-0 md:static md:z-0 md:top-0 md:h-full
+          ${isCollapsed ? 'w-16' : 'w-64'}
         `}
       >
-        <div className="p-6">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-primary-foreground" />
+        <div className="h-full flex flex-col">
+          <div className="p-4 border-b border-sidebar-border">
+            <div className="flex items-center justify-end">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="h-8 w-8 hidden md:flex rounded-full"
+              >
+                {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              </Button>
             </div>
-            <h1 className="text-xl font-medium text-sidebar-foreground">Fyza</h1>
           </div>
 
-          <nav className="space-y-2">
+          <nav className="flex-1 p-4 space-y-2">
             {navItems.map((item) => (
               <Button
                 key={item.id}
@@ -83,37 +88,42 @@ export function Navigation({ currentPage, onPageChange }: NavigationProps) {
                   currentPage === item.id
                     ? 'bg-sidebar-primary text-sidebar-primary-foreground'
                     : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                }`}
+                } ${isCollapsed ? 'px-3' : ''}`}
                 onClick={() => handlePageChange(item.id)}
               >
-                <item.icon className="h-5 w-5" />
-                <span className="flex-1 text-left">{item.label}</span>
-                {item.badge && (
-                  <Badge
-                    variant={currentPage === item.id ? 'secondary' : 'outline'}
-                    className="ml-auto"
-                  >
-                    {item.badge}
-                  </Badge>
+                <item.icon className="h-5 w-5 flex-shrink-0" />
+                {!isCollapsed && (
+                  <>
+                    <span className="flex-1 text-left">{item.label}</span>
+                    {item.badge && (
+                      <Badge
+                        variant={currentPage === item.id ? 'secondary' : 'outline'}
+                        className="ml-auto text-xs"
+                      >
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </>
                 )}
               </Button>
             ))}
           </nav>
 
-          <div className="mt-8 p-4 bg-sidebar-accent rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
-              <Bell className="h-4 w-4 text-sidebar-accent-foreground" />
-              <span className="text-sm font-medium text-sidebar-accent-foreground">
-                Notifications
-              </span>
-              <Badge variant="destructive" className="ml-auto text-xs">
-                3
-              </Badge>
+          {!isCollapsed && (
+            <div className="p-4 border-t border-sidebar-border">
+              <div className="p-3 bg-sidebar-accent rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-sidebar-accent-foreground rounded-full" />
+                  <span className="text-sm font-medium text-sidebar-accent-foreground">
+                    Quick Tip
+                  </span>
+                </div>
+                <p className="text-xs text-sidebar-accent-foreground/80">
+                  Review your portfolio allocation monthly for optimal returns
+                </p>
+              </div>
             </div>
-            <p className="text-xs text-sidebar-accent-foreground/80">
-              You have pending tax recommendations
-            </p>
-          </div>
+          )}
         </div>
       </div>
     </>
