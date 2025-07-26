@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, Path
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
@@ -15,6 +16,15 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# --- CORS for frontend dev ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, use the specific frontend origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db():
     db = SessionLocal()
