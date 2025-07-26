@@ -27,3 +27,4 @@ dist/
 # IDE settings
 .vscode/
 .idea/
+shared/utils/service_account.json
