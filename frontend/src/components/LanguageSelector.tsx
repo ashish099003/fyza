@@ -1,8 +1,8 @@
 'use client';
 
+import { Globe } from 'lucide-react';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Globe } from 'lucide-react';
 
 const languages = [
   { code: 'en', name: 'English', native: 'English' },
@@ -32,7 +32,9 @@ export function LanguageSelector() {
             <SelectItem key={language.code} value={language.code}>
               <div className="flex flex-col">
                 <span className="text-sm">{language.native}</span>
-                <span className="text-xs text-muted-foreground">{language.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {language.code === 'en' ? language.name : <em>{language.name} · Coming soon</em>}
+                </span>
               </div>
             </SelectItem>
           ))}
