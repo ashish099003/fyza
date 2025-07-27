@@ -6,9 +6,11 @@ import {
   Link as LinkIcon,
   PlusCircle,
   Shield,
+  Smartphone,
   Target,
   Trash2,
   TrendingUp,
+  Upload,
   User
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -21,7 +23,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Switch } from '../ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
-// Helper to generate a local unique ID for unsaved goals
 function tempId() {
   return 'temp_' + Math.random().toString(36).slice(2) + Date.now();
 }
@@ -39,9 +40,8 @@ type UserProfile = {
 };
 
 type FinancialGoal = {
-  // Use temp_id for local new goals, goal_id from backend for saved
   goal_id?: string;
-  temp_id?: string; 
+  temp_id?: string;
   user_id: number;
   goal_name: string;
   target_amount: number | string;
@@ -90,10 +90,7 @@ export function ProfilePage() {
     setGoalsLoading(true);
     fetch(`http://localhost:8000/api/financial-goals/${userId}`)
       .then(res => res.ok ? res.json() : [])
-      .then(data => {
-        // Remove any temp (unsaved) goals from local state if fetching fresh from backend
-        setGoals(data.map((goal: FinancialGoal) => ({ ...goal, temp_id: undefined })));
-      })
+      .then(data => setGoals(data.map((goal: FinancialGoal) => ({ ...goal, temp_id: undefined }))))
       .catch(() => setGoals([]))
       .finally(() => setGoalsLoading(false));
   }, [userId]);
@@ -129,7 +126,6 @@ export function ProfilePage() {
   };
 
   // Handlers for financial goals
-  // Accept temp_id if present, otherwise goal_id
   const handleGoalChange = (id: string, field: keyof FinancialGoal, value: any) => {
     setGoals(goals =>
       goals.map(goal =>
@@ -171,46 +167,64 @@ export function ProfilePage() {
       .catch(() => setGoalsError("Failed to delete goal"));
   };
 
-  // Save or update a goal
-  const handleSaveGoal = (goal: FinancialGoal) => {
+  // Save all goals at once (batch update/replace pattern)
+  const handleSaveAllGoals = () => {
     setGoalsLoading(true);
     setGoalsError(null);
-    const isNew = !goal.goal_id;
-    const method = isNew ? "POST" : "PUT";
-    const url = isNew
-      ? "http://localhost:8000/api/financial-goals/"
-      : `http://localhost:8000/api/financial-goals/${goal.goal_id}`;
-    const payload = {
-      ...goal,
-      priority: goal.priority,
-      user_id: userId, // always set user_id!
-    };
-    // Remove id fields not accepted by backend
-    if (!isNew) delete payload.goal_id;
-    if (payload.temp_id) delete payload.temp_id;
+    // Separate new and existing goals
+    const newGoals = goals.filter(g => !g.goal_id);
+    const updateGoals = goals.filter(g => g.goal_id);
+    const requests = [
+      // Create new goals
+      ...newGoals.map(goal =>
+        fetch("http://localhost:8000/api/financial-goals/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: userId,
+            goal_name: goal.goal_name,
+            target_amount: goal.target_amount,
+            target_date: goal.target_date,
+            priority: goal.priority,
+          }),
+        })
+          .then(async res => {
+            if (!res.ok) throw new Error(await res.text());
+            return res.json();
+          })
+      ),
+      // Update existing goals
+      ...updateGoals.map(goal =>
+        fetch(`http://localhost:8000/api/financial-goals/${goal.goal_id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: userId,
+            goal_name: goal.goal_name,
+            target_amount: goal.target_amount,
+            target_date: goal.target_date,
+            priority: goal.priority,
+          }),
+        })
+          .then(async res => {
+            if (!res.ok) throw new Error(await res.text());
+            return res.json();
+          })
+      ),
+    ];
 
-    fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then(async res => {
-        if (!res.ok) throw new Error(await res.text());
-        return res.json();
-      })
-      .then(data => {
-        setGoals(goals =>
-          isNew
-            // Replace the temp goal with the backend version
-            ? [...goals.filter(g => g.temp_id !== goal.temp_id), data]
-            : goals.map(g => (g.goal_id === data.goal_id ? data : g))
-        );
-      })
-      .catch(err => setGoalsError("Failed to save goal: " + err.message))
+    Promise.all(requests)
+      .then(() =>
+        // Refresh goals list
+        fetch(`http://localhost:8000/api/financial-goals/${userId}`)
+          .then(res => res.ok ? res.json() : [])
+          .then(data => setGoals(data.map((goal: FinancialGoal) => ({ ...goal, temp_id: undefined }))))
+      )
+      .catch(err => setGoalsError("Failed to save one or more goals: " + err.message))
       .finally(() => setGoalsLoading(false));
   };
 
-  // Integrations and Preferences dummy state
+  // Integrations (keep as in reference)
   const [integrations] = useState([
     { name: 'HDFC Bank', type: 'Banking', status: 'connected', icon: Building2 },
     { name: 'SBI Credit Card', type: 'Credit Card', status: 'connected', icon: CreditCard },
@@ -218,7 +232,6 @@ export function ProfilePage() {
     { name: 'LIC Portal', type: 'Insurance', status: 'not_connected', icon: Shield }
   ]);
 
-  // UI
   return (
     <div className="space-y-6">
       <div>
@@ -426,19 +439,19 @@ export function ProfilePage() {
                         </Select>
                       </div>
                     </div>
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleSaveGoal(goal)}
-                        disabled={goalsLoading}
-                      >
-                        {goal.goal_id ? "Save Changes" : "Create Goal"}
-                      </Button>
-                    </div>
                   </div>
                 );
               })}
+              <div className="flex justify-end gap-4">
+                <Button variant="outline">Save Draft</Button>
+                <Button
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  onClick={handleSaveAllGoals}
+                  disabled={goalsLoading}
+                >
+                  {goalsLoading ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -483,6 +496,49 @@ export function ProfilePage() {
               ))}
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Smartphone className="h-5 w-5 text-primary" />
+                UPI Integration
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 border rounded-lg">
+                <h4 className="font-medium mb-2">Link UPI IDs for Expense Tracking</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Connect your UPI IDs to automatically track and categorize your expenses
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input placeholder="priya@paytm" />
+                  <Button>
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Add UPI ID
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Upload className="h-5 w-5 text-primary" />
+                Upload Financial Data
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
+                <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h4 className="font-medium mb-2">Upload Excel File</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Upload your financial data in Excel format for quick setup
+                </p>
+                <Button>
+                  Choose File
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Preferences */}
@@ -520,6 +576,27 @@ export function ProfilePage() {
                 </div>
                 <Switch defaultChecked />
               </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Financial Literacy Level</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Select defaultValue="intermediate">
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="beginner">Beginner - New to investing</SelectItem>
+                  <SelectItem value="intermediate">Intermediate - Some investment experience</SelectItem>
+                  <SelectItem value="advanced">Advanced - Experienced investor</SelectItem>
+                  <SelectItem value="expert">Expert - Financial professional</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground mt-2">
+                This helps us customize content and recommendations to your level
+              </p>
             </CardContent>
           </Card>
         </TabsContent>
