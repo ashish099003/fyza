@@ -76,7 +76,7 @@ export function Header({ onShowProfile, onNavigateHome }: HeaderProps) {
   return (
     <header className="h-16 bg-card border-b border-border px-6 flex items-center justify-between flex-shrink-0">
       <div className="flex items-center gap-4">
-        <button 
+        <button
           onClick={onNavigateHome}
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
         >
@@ -86,10 +86,19 @@ export function Header({ onShowProfile, onNavigateHome }: HeaderProps) {
           <h1 className="text-xl font-semibold text-foreground">Fyza</h1>
         </button>
       </div>
-      
+
+      <div className="ml-6 text-sm text-muted-foreground relative group cursor-pointer">
+  📞 Support: <span className="font-medium text-foreground">+91-99999-88888</span>
+  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-max bg-muted px-2 py-1 text-xs text-muted-foreground rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-50">
+    🌟 Premium customers get priority access and their calls are catered by humans directly.
+  </div>
+</div>
+
+
       <div className="flex items-center gap-4">
         <LanguageSelector />
-        
+
+
         <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
           <PopoverTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
@@ -134,16 +143,24 @@ export function Header({ onShowProfile, onNavigateHome }: HeaderProps) {
             </div>
           </PopoverContent>
         </Popover>
-        
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="/placeholder-avatar.jpg" alt="Sundar Pichai" />
-                <AvatarFallback>SP</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
+  <div className="flex flex-col items-center space-y-1 relative group cursor-pointer">
+    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+      <Avatar className="h-8 w-8">
+        <AvatarImage src="/placeholder-avatar.jpg" alt="Sundar Pichai" />
+        <AvatarFallback>SP</AvatarFallback>
+      </Avatar>
+    </Button>
+    <Badge variant="default" className="bg-yellow-400 text-black text-xs px-2 py-0.5 rounded-full">
+      🌟 Premium
+    </Badge>
+    <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 w-max bg-muted px-2 py-1 text-xs text-muted-foreground rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-50">
+      🌟 Premium customers get priority access and their calls are catered by humans directly.
+    </div>
+  </div>
+</DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end">
             <DropdownMenuItem onClick={onShowProfile}>
               <User className="mr-2 h-4 w-4" />
@@ -151,7 +168,7 @@ export function Header({ onShowProfile, onNavigateHome }: HeaderProps) {
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
-              Account Settings
+              Account Settings <i> coming soon </i>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <LogOut className="mr-2 h-4 w-4" />
