@@ -23,7 +23,6 @@ router = APIRouter(
     tags=["financial_goals"],
 )
 
-
 @router.get(
     "/{user_id}",
     response_model=List[FinancialGoalResponse],
@@ -33,7 +32,6 @@ def read_goals_for_user(
         user_id: int, db: Session = Depends(get_db)
 ):
     return get_goals_for_user(db, user_id)
-
 
 @router.post(
     "/",
@@ -45,7 +43,6 @@ def create_financial_goal(
         goal_in: FinancialGoalCreate, db: Session = Depends(get_db)
 ):
     return create_goal(db, goal_in)
-
 
 @router.put(
     "/{goal_id}",
@@ -62,7 +59,6 @@ def update_financial_goal(
     if not updated:
         raise HTTPException(status_code=404, detail="Financial goal not found")
     return updated
-
 
 @router.delete(
     "/{goal_id}",

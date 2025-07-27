@@ -8,7 +8,7 @@ from .models import FinancialGoal
 from .schemas import FinancialGoalCreate, FinancialGoalUpdate
 
 
-def get_goals_for_user(db: Session, user_id: UUID) -> List[FinancialGoal]:
+def get_goals_for_user(db: Session, user_id: int) -> List[FinancialGoal]:
     return db.query(FinancialGoal).filter(FinancialGoal.user_id == user_id).all()
 
 
@@ -17,7 +17,13 @@ def get_goal(db: Session, goal_id: UUID) -> Optional[FinancialGoal]:
 
 
 def create_goal(db: Session, goal_in: FinancialGoalCreate) -> FinancialGoal:
-    goal = FinancialGoal(**goal_in.dict())
+    goal = FinancialGoal(
+        user_id=goal_in.user_id,
+        goal_name=goal_in.goal_name,
+        target_amount=goal_in.target_amount,
+        target_date=goal_in.target_date,
+        priority=goal_in.priority,
+    )
     db.add(goal)
     db.commit()
     db.refresh(goal)
