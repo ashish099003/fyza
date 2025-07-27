@@ -1,37 +1,32 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '../ui/dialog';
-import { 
-  BookOpen, 
-  Clock, 
-  Users, 
-  Star, 
-  Award, 
-  TrendingUp, 
-  Calculator,
-  Shield,
-  Target,
-  Play,
-  ExternalLink,
-  Trophy,
-  Gift,
-  ChevronRight,
-  ChevronLeft,
-  Maximize2,
-  CheckCircle,
-  Crown,
-  Zap,
-  Flame,
+import {
   ArrowRight,
-  Newspaper,
+  BookOpen,
+  Calculator,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Crown,
   Eye,
-  EyeOff
+  EyeOff,
+  Flame,
+  Maximize2,
+  Newspaper,
+  Play,
+  Shield,
+  Star,
+  Target,
+  TrendingUp,
+  Trophy,
+  Zap
 } from 'lucide-react';
+import { useState } from 'react';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 export function KnowledgePage() {
   const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
@@ -52,7 +47,7 @@ export function KnowledgePage() {
       title: 'Basics of Mutual Funds',
       level: 'Beginner',
       duration: '2 hours',
-      progress: 75,
+      progress: 0,
       description: 'Learn the fundamentals of mutual fund investing in the Indian market',
       instructor: 'Radhika Gupta',
       rating: 4.8,
@@ -94,7 +89,7 @@ export function KnowledgePage() {
       title: 'Advanced Portfolio Management',
       level: 'Advanced',
       duration: '5 hours',
-      progress: 0,
+      progress: 55,
       description: 'Professional techniques for portfolio optimization and risk management',
       instructor: 'Prashant Jain',
       rating: 4.9,
@@ -102,7 +97,7 @@ export function KnowledgePage() {
       image: '/api/placeholder/300/200',
       reward: 'Certificate + 300 points',
       modules: 20,
-      completion: '0%'
+      completion: '55%'
     }
   ];
 
@@ -216,12 +211,13 @@ export function KnowledgePage() {
   ];
 
   const nextCourse = () => {
-    setCurrentCourseIndex((prev) => (prev + 1) % courses.length);
+    setCurrentCourseIndex((prev) => (prev + 1) % recommendedCourses.length);
   };
 
   const prevCourse = () => {
-    setCurrentCourseIndex((prev) => (prev - 1 + courses.length) % courses.length);
+    setCurrentCourseIndex((prev) => (prev - 1 + recommendedCourses.length) % recommendedCourses.length);
   };
+
 
   const nextArticle = () => {
     setCurrentArticleIndex((prev) => (prev + 1) % articles.length);
@@ -239,7 +235,11 @@ export function KnowledgePage() {
     setCurrentToolIndex((prev) => (prev - 1 + tools.length) % tools.length);
   };
 
-  const currentCourse = courses[currentCourseIndex];
+  const recommendedCourses = courses.filter(course =>
+    ['Tax Planning Strategies', 'Advanced Portfolio Management'].includes(course.title)
+  );
+  const currentCourse = recommendedCourses[currentCourseIndex % recommendedCourses.length];
+
   const currentArticle = articles[currentArticleIndex];
   const currentTool = tools[currentToolIndex];
 
