@@ -253,8 +253,9 @@ export function PortfolioPage() {
         <TabsList className="grid w-full grid-cols-4 bg-muted p-1 rounded-lg">
           <TabsTrigger value="investments">Investments</TabsTrigger>
           <TabsTrigger value="debt">Debt</TabsTrigger>
-          <TabsTrigger value="taxation">Taxation</TabsTrigger>
+          <TabsTrigger value="taxation">Tax</TabsTrigger>
           <TabsTrigger value="insurance">Insurance</TabsTrigger>
+          <TabsTrigger value="hedge">Hedge Funds</TabsTrigger>
         </TabsList>
 
         {/* ---- INVESTMENTS TAB, MODIFIED AS REQUESTED ---- */}
@@ -585,6 +586,13 @@ export function PortfolioPage() {
             ))}
           </div>
         </TabsContent>
+        <TabsContent value="hedge" className="flex-1 flex items-center justify-center">
+  <div className="text-center space-y-3">
+    <PieChart className="mx-auto h-12 w-12 text-muted-foreground animate-pulse" />
+    <h2 className="text-xl font-semibold text-muted-foreground">Hedge Funds</h2>
+    <p className="text-sm text-muted-foreground">Exciting opportunities coming soon. Stay tuned!</p>
+  </div>
+</TabsContent>
         {/* TAXATION TAB */}
         <TabsContent value="taxation" className="flex-1 overflow-hidden space-y-3">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 h-full">
@@ -603,7 +611,7 @@ export function PortfolioPage() {
                         <p className="text-xs text-muted-foreground">15 days left</p>
                       </div>
                     </div>
-                    <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-xs">
+                    <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-xs" disabled>
                       File Now
                     </Button>
                   </div>

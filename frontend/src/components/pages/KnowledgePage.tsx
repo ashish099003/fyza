@@ -477,7 +477,7 @@ export function KnowledgePage() {
                       <ChevronRight className="h-3 w-3" />
                     </Button>
                   </div>
-                  <Button size="sm" className="bg-primary hover:bg-primary/90 text-xs">
+                  <Button size="sm" className="bg-primary hover:bg-primary/90 text-xs" disabled>
                     <Play className="h-3 w-3 mr-1" />
                     {currentCourse.progress > 0 ? 'Continue' : 'Start'}
                   </Button>
@@ -539,7 +539,7 @@ export function KnowledgePage() {
                       <ChevronRight className="h-3 w-3" />
                     </Button>
                   </div>
-                  <Button size="sm" className="text-xs">
+                  <Button size="sm" className="text-xs" disabled>
                     Use Tool
                     <ArrowRight className="h-3 w-3 ml-1" />
                   </Button>
