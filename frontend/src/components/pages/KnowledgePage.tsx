@@ -97,7 +97,7 @@ export function KnowledgePage() {
       image: '/api/placeholder/300/200',
       reward: 'Certificate + 300 points',
       modules: 20,
-      completion: '55%'
+      completion: '0%'
     }
   ];
 
