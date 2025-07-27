@@ -1,28 +1,27 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
-import { 
-  PieChart, 
-  TrendingUp, 
-  TrendingDown, 
-  CreditCard, 
-  Calculator, 
-  Shield,
-  Plus,
-  FileText,
+import {
   AlertTriangle,
+  Calculator,
   CheckCircle,
+  Clock,
+  CreditCard,
   Eye,
   EyeOff,
-  Clock,
+  FileText,
   Maximize2,
-  Filter
+  PieChart,
+  Plus,
+  Shield,
+  TrendingDown,
+  TrendingUp
 } from 'lucide-react';
+import { useState } from 'react';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 export function PortfolioPage() {
   const [collapsedSections, setCollapsedSections] = useState<string[]>([]);
@@ -35,6 +34,12 @@ export function PortfolioPage() {
         ? prev.filter(id => id !== sectionId)
         : [...prev, sectionId]
     );
+  };
+
+  const getRecommendation = (returns: number) => {
+    if (returns > 12) return 'Sell';
+    if (returns > 0) return 'Hold';
+    return 'Buy';
   };
 
   const investments = [
@@ -106,28 +111,6 @@ export function PortfolioPage() {
       paidTenure: 5,
       priority: 'low'
     },
-    // {
-    //   name: 'Personal Loan',
-    //   bank: 'SBI',
-    //   outstanding: 180000,
-    //   emi: 8500,
-    //   rate: 12.5,
-    //   tenure: '2 years',
-    //   totalTenure: 3,
-    //   paidTenure: 1,
-    //   priority: 'medium'
-    // },
-    // {
-    //   name: 'Car Loan',
-    //   bank: 'ICICI Bank',
-    //   outstanding: 450000,
-    //   emi: 12500,
-    //   rate: 9.2,
-    //   tenure: '4 years',
-    //   totalTenure: 5,
-    //   paidTenure: 1,
-    //   priority: 'low'
-    // },
     {
       name: 'Credit Card',
       bank: 'HDFC Bank',
@@ -274,6 +257,7 @@ export function PortfolioPage() {
           <TabsTrigger value="insurance">Insurance</TabsTrigger>
         </TabsList>
 
+        {/* ---- INVESTMENTS TAB, MODIFIED AS REQUESTED ---- */}
         <TabsContent value="investments" className="flex-1 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full">
             <Card className="lg:col-span-2 flex flex-col">
@@ -309,23 +293,45 @@ export function PortfolioPage() {
               </CardHeader>
               <CardContent className="flex-1 overflow-y-auto space-y-2">
                 {filteredInvestments.map((investment, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 text-sm">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium text-foreground">{investment.name}</h4>
-                        <Badge variant="outline" className="text-xs h-4">
-                          {investment.type}
-                        </Badge>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        ₹{(investment.invested / 1000).toFixed(0)}K → ₹{(investment.current / 1000).toFixed(0)}K | {investment.allocation}%
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 text-sm"
+                  >
+                    {/* Left: Asset name, type, returns (with icon) */}
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium text-foreground truncate">{investment.name}</h4>
+                          <Badge variant="outline" className="text-xs h-4">
+                            {investment.type}
+                          </Badge>
+                          <span
+                            className={`flex items-center gap-1 ml-2 text-xs font-medium ${investment.returns >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                          >
+                            {investment.returns >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                            {investment.returns > 0 ? '+' : ''}
+                            {investment.returns}%
+                          </span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          ₹{(investment.invested / 1000).toFixed(0)}K → ₹{(investment.current / 1000).toFixed(0)}K | {investment.allocation}%
+                        </div>
                       </div>
                     </div>
-                    <div className={`text-right ${investment.returns >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      <div className="flex items-center gap-1">
-                        {investment.returns >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                        <span className="font-medium text-sm">{investment.returns > 0 ? '+' : ''}{investment.returns}%</span>
-                      </div>
+                    {/* Right: Recommendation */}
+                    <div className="text-right flex flex-col items-end min-w-[70px]">
+                      <Badge
+                        variant="secondary"
+                        className={
+                          getRecommendation(investment.returns) === 'Buy'
+                            ? 'bg-green-100 text-green-700 border-green-300'
+                            : getRecommendation(investment.returns) === 'Sell'
+                              ? 'bg-red-100 text-red-700 border-red-300'
+                              : 'bg-blue-100 text-blue-700 border-blue-300'
+                        }
+                      >
+                        {getRecommendation(investment.returns)}
+                      </Badge>
                     </div>
                   </div>
                 ))}
@@ -383,7 +389,6 @@ export function PortfolioPage() {
                     />
                   </svg>
                 </div>
-                
                 <div className="space-y-2">
                   {assetAllocation.map((asset, index) => (
                     <div key={index} className="flex items-center justify-between text-sm">
@@ -395,7 +400,6 @@ export function PortfolioPage() {
                     </div>
                   ))}
                 </div>
-                
                 <div className="pt-3 border-t mt-3">
                   <p className="text-xs text-muted-foreground mb-2">Target: Equity 70% | Debt 25% | Gold 5%</p>
                   <Button className="w-full" size="sm">
@@ -406,7 +410,10 @@ export function PortfolioPage() {
             </Card>
           </div>
         </TabsContent>
+        {/* ---- END INVESTMENTS ---- */}
 
+        {/* ---- REST OF YOUR TABS (UNCHANGED) ---- */}
+        {/* DEBT TAB */}
         <TabsContent value="debt" className="flex-1 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 h-full overflow-y-auto">
             {debts.map((debt, index) => {
@@ -442,13 +449,11 @@ export function PortfolioPage() {
                   </CardHeader>
                   <CardContent className="flex-1 p-3">
                     <div className="space-y-3">
-                      {/* Outstanding Amount and Pie Chart Side by Side */}
                       <div className="flex items-center gap-3">
                         <div className="flex-1 text-center p-3 bg-gradient-to-br from-primary/10 to-green-50 rounded-xl border border-primary/20">
                           <div className="text-xl font-bold text-primary text-left">₹{(debt.outstanding / 100000).toFixed(1)}L</div>
                           <div className="text-xs text-muted-foreground text-left">Outstanding</div>
                         </div>
-                        
                         <div className="flex flex-col items-center">
                           <div className="relative w-12 h-12 mb-1">
                             <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
@@ -480,7 +485,6 @@ export function PortfolioPage() {
                           </div>
                         </div>
                       </div>
-                      
                       <div className="grid grid-cols-3 gap-2">
                         <div className="text-center p-2 bg-blue-50 rounded-xl border border-blue-100">
                           <div className="text-sm font-bold text-blue-600">₹{debt.emi.toLocaleString()}</div>
@@ -495,8 +499,6 @@ export function PortfolioPage() {
                           <div className="text-xs text-muted-foreground">Left</div>
                         </div>
                       </div>
-                      
-                      {/* Action Section */}
                       <div className="flex items-center justify-between pt-2 border-t border-border/50">
                         <div className="text-xs text-green-600">
                           Save ₹{Math.round(debt.outstanding * 0.15 / 100000)}L+ with prepayment
@@ -512,7 +514,7 @@ export function PortfolioPage() {
             })}
           </div>
         </TabsContent>
-
+        {/* INSURANCE TAB */}
         <TabsContent value="insurance" className="flex-1 overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto">
             {insurancePolicies.map((policy, index) => (
@@ -540,7 +542,6 @@ export function PortfolioPage() {
                 </CardHeader>
                 <CardContent className="p-[4px] pt-[4px] pr-[4px] pb-[4px] pl-[4px]">
                   <div className="space-y-1">
-                    {/* Optimized Layout - Coverage, Premium, Type in a single row */}
                     <div className="grid grid-cols-3 gap-1">
                       <div className="text-center p-1.5 bg-gradient-to-br from-primary/10 to-green-50 rounded-lg border border-primary/20">
                         <div className="text-sm font-bold text-primary">₹{(policy.cover / 100000).toFixed(0)}L</div>
@@ -555,8 +556,6 @@ export function PortfolioPage() {
                         <div className="text-xs text-muted-foreground">Type</div>
                       </div>
                     </div>
-                    
-                    {/* Action and Recommendation */}
                     <div className="flex items-center justify-between pt-1 border-t border-border/50">
                       {policy.recommendation === 'increase' ? (
                         <>
@@ -586,17 +585,15 @@ export function PortfolioPage() {
             ))}
           </div>
         </TabsContent>
-
+        {/* TAXATION TAB */}
         <TabsContent value="taxation" className="flex-1 overflow-hidden space-y-3">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 h-full">
-            
             {/* Tax Calculator */}
             <Card className="flex flex-col">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">Tax Calculator</CardTitle>
               </CardHeader>
               <CardContent className="flex-1 p-3">
-                {/* ITR Filing Banner at Top */}
                 <div className="p-3 bg-gradient-to-r from-orange-50 to-red-50 border-orange-200 border rounded-lg mb-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -611,8 +608,6 @@ export function PortfolioPage() {
                     </Button>
                   </div>
                 </div>
-                
-                {/* Tax Data Vertically */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-center p-2 bg-accent/30 rounded-lg">
                     <span className="text-sm text-muted-foreground">Gross Income</span>
@@ -633,7 +628,6 @@ export function PortfolioPage() {
                 </div>
               </CardContent>
             </Card>
-
             {/* Tax Saving Techniques */}
             <Card className="flex flex-col lg:col-span-2">
               <CardHeader className="pb-2">
@@ -652,7 +646,6 @@ export function PortfolioPage() {
                       <span className="text-xs text-green-600">Tax deduction under 80C</span>
                     </div>
                   </div>
-                  
                   <div className="p-2 border rounded-lg hover:bg-accent/50 cursor-pointer">
                     <div className="flex items-center justify-between mb-1">
                       <h4 className="font-medium text-sm">PPF Investment</h4>
@@ -664,7 +657,6 @@ export function PortfolioPage() {
                       <span className="text-xs text-green-600">EEE tax benefit</span>
                     </div>
                   </div>
-                  
                   <div className="p-2 border rounded-lg hover:bg-accent/50 cursor-pointer">
                     <div className="flex items-center justify-between mb-1">
                       <h4 className="font-medium text-sm">Health Insurance</h4>
@@ -676,12 +668,9 @@ export function PortfolioPage() {
                       <span className="text-xs text-orange-600">Coverage needed</span>
                     </div>
                   </div>
-                  
-
                 </div>
               </CardContent>
             </Card>
-
             {/* Tax Documents */}
             <Card className="flex flex-col">
               <CardHeader className="pb-2">
@@ -722,8 +711,8 @@ export function PortfolioPage() {
             </Card>
           </div>
         </TabsContent>
+        {/* ---- END TABS ---- */}
       </Tabs>
-
       {/* Fullscreen Dialog */}
       <Dialog open={!!fullscreenSection} onOpenChange={() => setFullscreenSection(null)}>
         <DialogContent className="max-w-6xl h-[80vh]">
@@ -740,7 +729,6 @@ export function PortfolioPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto">
-            {/* Fullscreen content would go here */}
             <p className="text-muted-foreground">Fullscreen view for {fullscreenSection}</p>
           </div>
         </DialogContent>
