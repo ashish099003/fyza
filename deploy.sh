@@ -34,7 +34,7 @@ gcloud services enable artifactregistry.googleapis.com run.googleapis.com
 
 # === BUILD DOCKER IMAGE ===
 echo "🐳 Building Docker image..."
-docker build -t $IMAGE_NAME:$TAG .
+docker build  --no-cache --platform linux/amd64 -t $IMAGE_NAME:$TAG .
 
 # === CREATE ARTIFACT REPO IF NEEDED ===
 if ! gcloud artifacts repositories describe $REPO_NAME --location=$REGION &> /dev/null
