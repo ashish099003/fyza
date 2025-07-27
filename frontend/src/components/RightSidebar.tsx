@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, ExternalLink, Lightbulb, Target, TrendingUp } from 'lucide-react';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { ChevronRight, ChevronLeft, Lightbulb, TrendingUp, AlertTriangle, CheckCircle, Target, ExternalLink } from 'lucide-react';
 
 interface RightSidebarProps {
   currentPage: string;
@@ -195,10 +194,21 @@ export function RightSidebar({ currentPage, onCollapsedChange, isCollapsed, onNa
 
       <div className="flex-1 overflow-hidden">
         <Tabs defaultValue="alerts" className="h-full flex flex-col">
-          <TabsList className="grid w-full grid-cols-2 mx-4 mt-4">
-            <TabsTrigger value="alerts">Alerts & Tips</TabsTrigger>
-            <TabsTrigger value="recommendations">AI Recommendations</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 gap-2 px-4 mt-4">
+            <TabsTrigger
+              value="alerts"
+              className="px-3 py-2 text-sm font-medium truncate"
+            >
+              Alerts & Tips
+            </TabsTrigger>
+            <TabsTrigger
+              value="recommendations"
+              className="px-3 py-2 text-sm font-medium truncate"
+            >
+              AI Recommendations
+            </TabsTrigger>
           </TabsList>
+
           
           <TabsContent value="alerts" className="flex-1 overflow-y-auto p-4 space-y-3">
             {content.tips.map((tip, index) => (
