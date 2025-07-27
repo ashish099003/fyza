@@ -86,3 +86,10 @@ oauthlib~=3.3.1
 blinker~=1.9.0
 pillow~=11.3.0
 docstring_parser~=0.17.0
+
+
+fastapi[all]
+psycopg2-binary
+sqlalchemy
+python-dotenv
+pydantic
