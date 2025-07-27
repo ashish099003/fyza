@@ -1,28 +1,27 @@
 'use client';
 
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Download,
+  Eye,
+  Filter,
+  Maximize2,
+  Plus,
+  Target,
+  TrendingUp,
+  Wallet
+} from 'lucide-react';
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { 
-  Wallet, 
-  TrendingUp, 
-  Target, 
-  Plus,
-  Download,
-  Filter,
-  Calendar,
-  AlertCircle,
-  CheckCircle,
-  Eye,
-  Maximize2,
-  X
-} from 'lucide-react';
 
 export function BudgetPage() {
   const [showAllExpenses, setShowAllExpenses] = useState(false);
@@ -73,7 +72,6 @@ export function BudgetPage() {
           <DialogTitle className="flex items-center justify-between">
             All Expenses
             <Button variant="ghost" size="icon" onClick={() => setShowAllExpenses(false)}>
-              <X className="h-4 w-4" />
             </Button>
           </DialogTitle>
           <DialogDescription>View and filter all your expenses by category</DialogDescription>
